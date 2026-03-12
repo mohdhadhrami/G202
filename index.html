@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="G202 Gate" />
+  <meta name="description" content="تحكم في بوابتك G202 GSM بسهولة" />
+
+  <title>G202 Gate Opener</title>
+
+  <!-- ربط ملف manifest لدعم PWA -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ===== الإعدادات الأساسية للخط والألوان ===== */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f1f5f9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* ===== شريط التبويبات السفلي ===== */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #1e293b;
+      border-top: 1px solid #334155;
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 50;
+    }
+
+    /* ===== تأثير النقر على الأزرار ===== */
+    .action-btn {
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+
+    .action-btn:active {
+      transform: scale(0.96);
+      opacity: 0.85;
+    }
+
+    /* ===== حركة التبويب النشط ===== */
+    .tab-btn.active .tab-icon {
+      transform: translateY(-2px);
+    }
+
+    .tab-btn .tab-label {
+      transition: color 0.2s ease;
+    }
+
+    /* ===== Modal overlay ===== */
+    .modal-overlay {
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* ===== Toast notifications ===== */
+    .toast {
+      animation: slideInUp 0.3s ease forwards;
+    }
+
+    .toast.hide {
+      animation: slideOutDown 0.3s ease forwards;
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    @keyframes slideOutDown {
+      from { transform: translateY(0);    opacity: 1; }
+      to   { transform: translateY(100px); opacity: 0; }
+    }
+
+    /* ===== الحقول النصية ===== */
+    input[type="text"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="password"] {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.875rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    /* ===== بطاقات التبويب ===== */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ===== خط تزييني للبطاقة ===== */
+    .card-accent {
+      border-right: 3px solid #3b82f6;
+    }
+
+    /* ===== نبض مؤشر الحالة ===== */
+    .status-dot {
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ===== تحسين التمرير ===== */
+    .scroll-area {
+      -webkit-overflow-scrolling: touch;
+    }
+  </style>
+</head>
+
+<body class="scroll-area">
+
+  <!-- ============================================================
+       الرأسية - Header
+  ============================================================ -->
+  <header class="sticky top-0 z-40 flex items-center justify-between px-4 py-3"
+          style="background-color:#1e293b; border-bottom:1px solid #334155;">
+
+    <!-- أيقونة القفل واسم التطبيق -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center w-9 h-9 rounded-xl"
+           style="background-color:#1d4ed8;">
+        <!-- أيقونة القفل SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-base font-bold text-white leading-none">G202 Gate</h1>
+        <p class="text-xs mt-0.5" style="color:#64748b;">فاتح البوابة الذكي</p>
+      </div>
+    </div>
+
+    <!-- زر الإعدادات -->
+    <button onclick="openSettings()"
+            class="action-btn flex items-center justify-center w-9 h-9 rounded-full"
+            style="background-color:#0f172a;"
+            aria-label="الإعدادات">
+      <!-- أيقونة الترس SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+           viewBox="0 0 24 24" stroke="#94a3b8" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ============================================================
+       المحتوى الرئيسي
+  ============================================================ -->
+  <main class="pb-24 px-4 pt-4 max-w-lg mx-auto">
+
+    <!-- ===== بطاقة حالة الجهاز ===== -->
+    <div class="rounded-2xl p-4 mb-5 card-accent" style="background-color:#1e293b;">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium mb-1" style="color:#64748b;">حالة الجهاز</p>
+          <p id="statusPhone" class="text-sm font-semibold text-white">لم يتم ضبط الرقم</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="status-dot w-2.5 h-2.5 rounded-full" id="statusDot"
+                style="background-color:#64748b;"></span>
+          <span class="text-xs font-medium" id="statusLabel" style="color:#64748b;">غير متصل</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== التبويب الأول: تحكم ===== -->
+    <div id="tab-control" class="tab-content active">
+
+      <!-- عنوان القسم -->
+      <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#64748b;">
+        أوامر التحكم في البوابة
+      </p>
+
+      <!-- زر فتح الباب -->
+      <button onclick="sendSMS(buildCode('ON#'))"
+              class="action-btn w-full flex items-center gap-4 rounded-2xl p-5 mb-3 text-right"
+              style="background: linear-gradient(135deg, #16a34a, #15803d);">
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl"
+             style="background-color:rgba(255,255,255,0.15);">
+          <!-- أيقونة القفل المفتوح -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-lg font-bold text-white">فتح الباب</p>
+          <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.7);">إرسال أمر الفتح عبر SMS</p>
+        </div>
+        <!-- سهم يمين للـ LTR -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:rgba(255,255,255,0.5);"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <!-- زر إغلاق الباب -->
+      <button onclick="sendSMS(buildCode('OFF#'))"
+              class="action-btn w-full flex items-center gap-4 rounded-2xl p-5 mb-3 text-right"
+              style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl"
+             style="background-color:rgba(255,255,255,0.15);">
+          <!-- أيقونة القفل المغلق -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-lg font-bold text-white">إغلاق الباب</p>
+          <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.7);">إرسال أمر الإغلاق عبر SMS</p>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:rgba(255,255,255,0.5);"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <!-- زر إبقاء مفتوحاً -->
+      <button onclick="sendSMS(buildCode('GOT00#'))"
+              class="action-btn w-full flex items-center gap-4 rounded-2xl p-5 mb-3 text-right"
+              style="background: linear-gradient(135deg, #d97706, #b45309);">
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl"
+             style="background-color:rgba(255,255,255,0.15);">
+          <!-- أيقونة الباب المفتوح دائماً -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v18"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 12h.01"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-lg font-bold text-white">إبقاء مفتوحاً</p>
+          <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.7);">إبقاء البوابة مفتوحة باستمرار</p>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:rgba(255,255,255,0.5);"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <!-- ملاحظة إرشادية -->
+      <div class="flex items-start gap-2 rounded-xl p-3 mt-4" style="background-color:#1e293b;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mt-0.5 shrink-0" style="color:#3b82f6;"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-xs leading-relaxed" style="color:#64748b;">
+          عند الضغط على أي زر سيتم فتح تطبيق الرسائل مع الكود المُعبَّأ مسبقاً، اضغط إرسال لتنفيذ الأمر.
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== التبويب الثاني: مستخدمون ===== -->
+    <div id="tab-users" class="tab-content">
+
+      <!-- إضافة مستخدم -->
+      <div class="rounded-2xl p-5 mb-4" style="background-color:#1e293b;">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg"
+               style="background-color:rgba(59,130,246,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#3b82f6;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+            </svg>
+          </div>
+          <h2 class="text-base font-bold text-white">إضافة مستخدم</h2>
+        </div>
+
+        <!-- حقل رقم الهاتف للمستخدم -->
+        <div class="mb-3">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            رقم هاتف المستخدم
+          </label>
+          <input type="tel" id="addUserPhone" placeholder="مثال: 0501234567"
+                 inputmode="tel" autocomplete="tel" />
+        </div>
+
+        <!-- حقل رقم التسلسل -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            رقم التسلسل (001 – 200)
+          </label>
+          <input type="number" id="addUserSeq" placeholder="مثال: 001"
+                 min="1" max="200" inputmode="numeric" />
+        </div>
+
+        <!-- زر إضافة المستخدم -->
+        <button onclick="addUser()"
+                class="action-btn w-full py-3 rounded-xl font-bold text-white text-sm"
+                style="background-color:#3b82f6;">
+          إضافة المستخدم عبر SMS
+        </button>
+      </div>
+
+      <!-- حذف مستخدم -->
+      <div class="rounded-2xl p-5" style="background-color:#1e293b;">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg"
+               style="background-color:rgba(239,68,68,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#ef4444;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/>
+            </svg>
+          </div>
+          <h2 class="text-base font-bold text-white">حذف مستخدم</h2>
+        </div>
+
+        <!-- حقل رقم التسلسل للحذف -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            رقم التسلسل للحذف
+          </label>
+          <input type="number" id="delUserSeq" placeholder="مثال: 005"
+                 min="1" max="200" inputmode="numeric" />
+        </div>
+
+        <!-- زر حذف المستخدم -->
+        <button onclick="deleteUser()"
+                class="action-btn w-full py-3 rounded-xl font-bold text-white text-sm"
+                style="background-color:#dc2626;">
+          حذف المستخدم عبر SMS
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== التبويب الثالث: صيانة ===== -->
+    <div id="tab-maintenance" class="tab-content">
+
+      <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#64748b;">
+        أدوات الصيانة والتشخيص
+      </p>
+
+      <!-- بطاقة فحص قوة الشبكة -->
+      <div class="rounded-2xl p-5 mb-4" style="background-color:#1e293b;">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:#3b82f6;"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+              </svg>
+              <h3 class="text-sm font-bold text-white">فحص قوة الشبكة</h3>
+            </div>
+            <p class="text-xs leading-relaxed mb-4" style="color:#64748b;">
+              يرسل أمر فحص قوة إشارة GSM ويُرجع قراءة CSQ من الجهاز.
+            </p>
+            <button onclick="sendSMS(buildCode('CSQ?', false))"
+                    class="action-btn w-full py-2.5 rounded-xl font-semibold text-sm"
+                    style="background-color:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3);">
+              فحص قوة الشبكة
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- بطاقة تفعيل رسائل التأكيد -->
+      <div class="rounded-2xl p-5 mb-4" style="background-color:#1e293b;">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:#22c55e;"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <h3 class="text-sm font-bold text-white">تفعيل رسائل التأكيد</h3>
+            </div>
+            <p class="text-xs leading-relaxed mb-4" style="color:#64748b;">
+              يُفعّل إرسال رسالة تأكيد من الجهاز بعد تنفيذ كل أمر.
+            </p>
+            <button onclick="sendSMS(buildCode('R#', false))"
+                    class="action-btn w-full py-2.5 rounded-xl font-semibold text-sm"
+                    style="background-color:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3);">
+              تفعيل رسائل التأكيد
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- معلومات الجهاز -->
+      <div class="rounded-2xl p-4" style="background-color:#1e293b; border:1px solid #334155;">
+        <p class="text-xs font-bold mb-2" style="color:#94a3b8;">معلومات الجهاز المحفوظة</p>
+        <div class="flex justify-between items-center py-2"
+             style="border-bottom:1px solid #334155;">
+          <span class="text-xs" style="color:#64748b;">رقم الجهاز</span>
+          <span class="text-xs font-mono font-medium" id="infoPhone" style="color:#f1f5f9;">—</span>
+        </div>
+        <div class="flex justify-between items-center py-2">
+          <span class="text-xs" style="color:#64748b;">كلمة المرور</span>
+          <span class="text-xs font-mono font-medium" id="infoPass" style="color:#f1f5f9;">—</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       شريط التبويبات السفلي
+  ============================================================ -->
+  <nav class="tab-bar">
+    <div class="flex items-stretch h-16">
+
+      <!-- تبويب التحكم -->
+      <button id="tabBtn-control" onclick="switchTab('control')"
+              class="tab-btn active flex-1 flex flex-col items-center justify-center gap-0.5 pt-2">
+        <span class="tab-icon transition-transform duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+          </svg>
+        </span>
+        <span class="tab-label text-xs font-medium">تحكم</span>
+      </button>
+
+      <!-- تبويب المستخدمون -->
+      <button id="tabBtn-users" onclick="switchTab('users')"
+              class="tab-btn flex-1 flex flex-col items-center justify-center gap-0.5 pt-2">
+        <span class="tab-icon transition-transform duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </span>
+        <span class="tab-label text-xs font-medium">مستخدمون</span>
+      </button>
+
+      <!-- تبويب الصيانة -->
+      <button id="tabBtn-maintenance" onclick="switchTab('maintenance')"
+              class="tab-btn flex-1 flex flex-col items-center justify-center gap-0.5 pt-2">
+        <span class="tab-icon transition-transform duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </span>
+        <span class="tab-label text-xs font-medium">صيانة</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       نافذة الإعدادات (Modal)
+  ============================================================ -->
+  <div id="settingsModal"
+       class="modal-overlay fixed inset-0 z-50 flex items-end justify-center p-4 pb-6 hidden"
+       style="background-color:rgba(0,0,0,0.7);">
+
+    <div class="w-full max-w-md rounded-3xl p-6" style="background-color:#1e293b;">
+
+      <!-- رأس Modal -->
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-white">الإعدادات</h2>
+        <button onclick="closeSettings()"
+                class="action-btn flex items-center justify-center w-8 h-8 rounded-full"
+                style="background-color:#0f172a;"
+                aria-label="إغلاق">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#94a3b8;"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- حقل رقم هاتف الجهاز -->
+      <div class="mb-4">
+        <label for="settingsPhone" class="block text-sm font-medium mb-2" style="color:#94a3b8;">
+          رقم هاتف جهاز G202
+        </label>
+        <input type="tel" id="settingsPhone"
+               placeholder="مثال: +966501234567"
+               inputmode="tel" autocomplete="tel" />
+        <p class="text-xs mt-1.5" style="color:#64748b;">
+          رقم الـ SIM المُركَّب في وحدة التحكم
+        </p>
+      </div>
+
+      <!-- حقل كلمة المرور -->
+      <div class="mb-6">
+        <label for="settingsPassword" class="block text-sm font-medium mb-2" style="color:#94a3b8;">
+          كلمة المرور (افتراضي: 1234)
+        </label>
+        <input type="text" id="settingsPassword"
+               placeholder="1234"
+               inputmode="numeric" maxlength="8" />
+        <p class="text-xs mt-1.5" style="color:#64748b;">
+          كلمة المرور المُبرمجة في جهاز G202
+        </p>
+      </div>
+
+      <!-- رسالة الخطأ -->
+      <p id="settingsError" class="text-xs mb-3 hidden" style="color:#f87171;"></p>
+
+      <!-- زر الحفظ -->
+      <button onclick="saveSettings()"
+              class="action-btn w-full py-3.5 rounded-2xl font-bold text-white"
+              style="background-color:#3b82f6;">
+        حفظ الإعدادات
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Toast Notification
+  ============================================================ -->
+  <div id="toastContainer"
+       class="fixed bottom-24 left-4 right-4 max-w-sm mx-auto z-50 pointer-events-none">
+  </div>
+
+  <!-- ============================================================
+       JavaScript
+  ============================================================ -->
+  <script>
+    // ===== المفاتيح المستخدمة في LocalStorage =====
+    const PHONE_KEY = 'g202_phone';
+    const PASS_KEY  = 'g202_password';
+
+    // ===== التبويب النشط حالياً =====
+    let activeTab = 'control';
+
+    // ============================================================
+    // دالة بناء كود SMS بناءً على الأمر المُمرَّر
+    // withSuffix: هل يُضاف # في النهاية تلقائياً؟
+    // ============================================================
+    function buildCode(command, withHash = true) {
+      const pass = localStorage.getItem(PASS_KEY) || '1234';
+      // يُركِّب الكود على صيغة: [كلمة المرور]#[الأمر]
+      return `${pass}#${command}`;
+    }
+
+    // ============================================================
+    // دالة إرسال SMS - تفتح تطبيق الرسائل الأصلي مع الكود
+    // ============================================================
+    function sendSMS(code) {
+      // استرجاع رقم هاتف الجهاز من LocalStorage
+      const phone = localStorage.getItem(PHONE_KEY);
+
+      // إذا لم يكن الرقم محفوظاً، نفتح نافذة الإعدادات
+      if (!phone) {
+        showToast('يرجى ضبط رقم الجهاز في الإعدادات أولاً', 'error');
+        openSettings();
+        return;
+      }
+
+      // عرض toast يُظهر الكود الذي سيُرسَل
+      showToast(`إرسال: ${code}`, 'info');
+
+      // الكشف عن نوع الجهاز لاختيار صيغة URI المناسبة
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      // iOS يستخدم & بينما Android يستخدم ?
+      const separator = isIOS ? '&' : '?';
+      const smsURI = `sms:${phone}${separator}body=${encodeURIComponent(code)}`;
+
+      // فتح تطبيق الرسائل مع الكود المُعبَّأ
+      window.location.href = smsURI;
+    }
+
+    // ============================================================
+    // دالة إضافة مستخدم جديد
+    // الصيغة: [password]#TEL[phone]#[seq]#
+    // ============================================================
+    function addUser() {
+      const phone = document.getElementById('addUserPhone').value.trim();
+      const seqRaw = document.getElementById('addUserSeq').value.trim();
+
+      // التحقق من المدخلات
+      if (!phone) {
+        showToast('يرجى إدخال رقم هاتف المستخدم', 'error');
+        return;
+      }
+      if (!seqRaw) {
+        showToast('يرجى إدخال رقم التسلسل', 'error');
+        return;
+      }
+
+      const seq = parseInt(seqRaw, 10);
+
+      // التحقق من نطاق التسلسل (1 - 200)
+      if (seq < 1 || seq > 200) {
+        showToast('رقم التسلسل يجب أن يكون بين 1 و200', 'error');
+        return;
+      }
+
+      // تنسيق رقم التسلسل كـ 3 أرقام (مثال: 5 → 005)
+      const seqFormatted = String(seq).padStart(3, '0');
+
+      const pass = localStorage.getItem(PASS_KEY) || '1234';
+      // بناء كود الإضافة
+      const code = `${pass}#TEL${phone}#${seqFormatted}#`;
+
+      sendSMS(code);
+    }
+
+    // ============================================================
+    // دالة حذف مستخدم بواسطة رقم التسلسل
+    // الصيغة: [password]#TEL#[seq]#
+    // ============================================================
+    function deleteUser() {
+      const seqRaw = document.getElementById('delUserSeq').value.trim();
+
+      // التحقق من وجود القيمة
+      if (!seqRaw) {
+        showToast('يرجى إدخال رقم التسلسل للحذف', 'error');
+        return;
+      }
+
+      const seq = parseInt(seqRaw, 10);
+
+      // التحقق من نطاق التسلسل
+      if (seq < 1 || seq > 200) {
+        showToast('رقم التسلسل يجب أن يكون بين 1 و200', 'error');
+        return;
+      }
+
+      // تنسيق رقم التسلسل
+      const seqFormatted = String(seq).padStart(3, '0');
+
+      const pass = localStorage.getItem(PASS_KEY) || '1234';
+      // بناء كود الحذف (بدون رقم هاتف)
+      const code = `${pass}#TEL#${seqFormatted}#`;
+
+      sendSMS(code);
+    }
+
+    // ============================================================
+    // دوال الإعدادات (Settings Modal)
+    // ============================================================
+
+    // فتح نافذة الإعدادات وتعبئتها بالقيم المحفوظة
+    function openSettings() {
+      const modal = document.getElementById('settingsModal');
+      modal.classList.remove('hidden');
+
+      // تعبئة الحقول بالقيم المحفوظة مسبقاً
+      document.getElementById('settingsPhone').value    = localStorage.getItem(PHONE_KEY) || '';
+      document.getElementById('settingsPassword').value = localStorage.getItem(PASS_KEY)  || '1234';
+      document.getElementById('settingsError').classList.add('hidden');
+    }
+
+    // إغلاق نافذة الإعدادات
+    function closeSettings() {
+      // نسمح بالإغلاق فقط إذا كان الرقم محفوظاً
+      const phone = localStorage.getItem(PHONE_KEY);
+      if (!phone) {
+        showError('يجب إدخال رقم الجهاز للمتابعة');
+        return;
+      }
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    // حفظ الإعدادات في LocalStorage
+    function saveSettings() {
+      const phone = document.getElementById('settingsPhone').value.trim();
+      const pass  = document.getElementById('settingsPassword').value.trim();
+
+      // التحقق من رقم الهاتف
+      if (!phone) {
+        showError('رقم هاتف الجهاز مطلوب');
+        return;
+      }
+
+      // التحقق من كلمة المرور
+      const password = pass || '1234';
+
+      // حفظ البيانات في LocalStorage
+      localStorage.setItem(PHONE_KEY, phone);
+      localStorage.setItem(PASS_KEY,  password);
+
+      // إغلاق النافذة وتحديث واجهة الحالة
+      document.getElementById('settingsModal').classList.add('hidden');
+      updateStatus();
+
+      showToast('تم حفظ الإعدادات بنجاح', 'success');
+    }
+
+    // عرض رسالة خطأ داخل نافذة الإعدادات
+    function showError(msg) {
+      const el = document.getElementById('settingsError');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    // ============================================================
+    // تحديث مؤشر حالة الجهاز في الرأسية والصيانة
+    // ============================================================
+    function updateStatus() {
+      const phone = localStorage.getItem(PHONE_KEY);
+      const pass  = localStorage.getItem(PASS_KEY) || '—';
+
+      // تحديث الرأسية
+      const phoneTxt  = document.getElementById('statusPhone');
+      const dot       = document.getElementById('statusDot');
+      const label     = document.getElementById('statusLabel');
+
+      if (phone) {
+        phoneTxt.textContent = phone;
+        dot.style.backgroundColor   = '#22c55e';   // أخضر = متصل
+        label.textContent            = 'جاهز';
+        label.style.color            = '#22c55e';
+      } else {
+        phoneTxt.textContent = 'لم يتم ضبط الرقم';
+        dot.style.backgroundColor   = '#64748b';   // رمادي = غير متصل
+        label.textContent            = 'غير متصل';
+        label.style.color            = '#64748b';
+      }
+
+      // تحديث قسم الصيانة
+      document.getElementById('infoPhone').textContent = phone || '—';
+      // إخفاء معظم كلمة المرور لأسباب أمنية
+      document.getElementById('infoPass').textContent  = pass ? '••••' : '—';
+    }
+
+    // ============================================================
+    // دالة التبديل بين التبويبات
+    // ============================================================
+    function switchTab(tabName) {
+      // إخفاء كل التبويبات وإزالة الحالة النشطة من الأزرار
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.querySelector('.tab-label').style.color = '#64748b';
+        btn.querySelector('.tab-icon svg').style.color = '#64748b';
+        btn.querySelector('.tab-icon svg').setAttribute('stroke', '#64748b');
+      });
+
+      // إظهار التبويب المختار وتفعيل زره
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      const activeBtn = document.getElementById(`tabBtn-${tabName}`);
+      activeBtn.classList.add('active');
+      activeBtn.querySelector('.tab-label').style.color = '#3b82f6';
+      activeBtn.querySelector('.tab-icon svg').setAttribute('stroke', '#3b82f6');
+
+      activeTab = tabName;
+    }
+
+    // ============================================================
+    // نظام Toast Notifications
+    // ============================================================
+    let toastTimer = null;
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+
+      // تحديد لون الـ Toast بناءً على النوع
+      const colors = {
+        success : { bg: '#166534', border: '#22c55e', text: '#86efac', icon: '✓' },
+        error   : { bg: '#7f1d1d', border: '#ef4444', text: '#fca5a5', icon: '✕' },
+        info    : { bg: '#1e3a5f', border: '#3b82f6', text: '#93c5fd', icon: '→' },
+      };
+
+      const c = colors[type] || colors.info;
+
+      // إزالة أي Toast سابق
+      container.innerHTML = '';
+      if (toastTimer) clearTimeout(toastTimer);
+
+      // إنشاء عنصر الـ Toast
+      const toast = document.createElement('div');
+      toast.className = 'toast flex items-center gap-3 rounded-2xl px-4 py-3 pointer-events-auto';
+      toast.style.cssText = `
+        background-color: ${c.bg};
+        border: 1px solid ${c.border};
+        color: ${c.text};
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      `;
+
+      toast.innerHTML = `
+        <span class="text-base font-bold">${c.icon}</span>
+        <span class="text-sm font-medium flex-1">${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      // إخفاء الـ Toast بعد ثانيتين
+      toastTimer = setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => { container.innerHTML = ''; }, 300);
+      }, 2000);
+    }
+
+    // ============================================================
+    // الإغلاق بالضغط خارج نافذة الإعدادات
+    // ============================================================
+    document.getElementById('settingsModal').addEventListener('click', function(e) {
+      if (e.target === this) closeSettings();
+    });
+
+    // ============================================================
+    // تسجيل Service Worker لدعم PWA
+    // ============================================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('G202 SW registered:', reg.scope))
+          .catch(err => console.warn('G202 SW registration failed:', err));
+      });
+    }
+
+    // ============================================================
+    // تهيئة الصفحة عند التحميل
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // تحديث واجهة الحالة
+      updateStatus();
+
+      // تفعيل ألوان التبويب الافتراضي (تحكم)
+      switchTab('control');
+
+      // إذا لم يكن الرقم محفوظاً، فتح الإعدادات تلقائياً
+      const phone = localStorage.getItem(PHONE_KEY);
+      if (!phone) {
+        // تأخير بسيط لضمان اكتمال رسم الواجهة
+        setTimeout(() => openSettings(), 400);
+      }
+    });
+  </script>
+
+</body>
+</html>
