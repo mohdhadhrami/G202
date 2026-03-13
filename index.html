@@ -148,39 +148,72 @@
   <!-- ============================================================
        الرأسية - Header
   ============================================================ -->
-  <header class="sticky top-0 z-40 flex items-center justify-between px-4 py-3"
-          style="background-color:#1e293b; border-bottom:1px solid #334155;">
+  <header class="sticky top-0 z-40" style="background-color:#1e293b; border-bottom:1px solid #334155;">
 
-    <!-- أيقونة القفل واسم التطبيق -->
-    <div class="flex items-center gap-3">
-      <div class="flex items-center justify-center w-9 h-9 rounded-xl"
-           style="background-color:#1d4ed8;">
-        <!-- أيقونة القفل SVG -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+    <!-- شريط الشركة العلوي -->
+    <div class="flex items-center justify-between px-4 py-2" style="border-bottom:1px solid #1e3a5f; background-color:#0f172a;">
+      <div class="flex items-center gap-2">
+        <!-- شعار RADMA SVG -->
+        <svg width="28" height="34" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ef4444"/>
+              <stop offset="100%" stop-color="#991b1b"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 2 L74 14 L74 52 Q74 78 40 94 Q6 78 6 52 L6 14 Z" fill="url(#shieldGrad)"/>
+          <path d="M12 24 Q6 50 13 74 Q20 56 26 40 Q19 32 12 24Z" fill="#2563eb"/>
+          <text x="32" y="66" font-family="Arial Black,Arial" font-size="40" font-weight="900" fill="white">R</text>
+          <path d="M40 4 L68 15 L68 22 L40 11 L12 22 L12 15 Z" fill="rgba(255,255,255,0.12)"/>
         </svg>
+        <div>
+          <p class="text-sm font-black tracking-widest" style="color:#e2e8f0; letter-spacing:0.15em;">RADMA</p>
+          <p class="text-xs" style="color:#3b82f6;">التقنية الذكية</p>
+        </div>
       </div>
-      <div>
-        <h1 class="text-base font-bold text-white leading-none">G202 Gate</h1>
-        <p class="text-xs mt-0.5" style="color:#64748b;">فاتح البوابة الذكي</p>
+      <div class="flex items-center gap-3">
+        <a href="https://www.instagram.com/radma_om" target="_blank"
+           class="flex items-center gap-1 text-xs" style="color:#94a3b8;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+          </svg>
+          radma_om
+        </a>
+        <a href="tel:90660001" class="text-xs font-mono" style="color:#94a3b8;">90660001</a>
       </div>
     </div>
 
-    <!-- زر الإعدادات -->
-    <button onclick="openSettings()"
-            class="action-btn flex items-center justify-center w-9 h-9 rounded-full"
-            style="background-color:#0f172a;"
-            aria-label="الإعدادات">
-      <!-- أيقونة الترس SVG -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-           viewBox="0 0 24 24" stroke="#94a3b8" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
-    </button>
+    <!-- شريط التطبيق الرئيسي -->
+    <div class="flex items-center justify-between px-4 py-3">
+      <!-- أيقونة القفل واسم التطبيق -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center w-9 h-9 rounded-xl"
+             style="background-color:#1d4ed8;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-white leading-none">G202 Gate</h1>
+          <p class="text-xs mt-0.5" style="color:#64748b;">فاتح البوابة الذكي</p>
+        </div>
+      </div>
+
+      <!-- زر الإعدادات -->
+      <button onclick="openSettings()"
+              class="action-btn flex items-center justify-center w-9 h-9 rounded-full"
+              style="background-color:#0f172a;"
+              aria-label="الإعدادات">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+             viewBox="0 0 24 24" stroke="#94a3b8" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </button>
+    </div>
   </header>
 
   <!-- ============================================================
@@ -205,6 +238,43 @@
 
     <!-- ===== التبويب الأول: تحكم ===== -->
     <div id="tab-control" class="tab-content active">
+
+      <!-- بطاقة صورة الجهاز -->
+      <div class="rounded-2xl overflow-hidden mb-5" style="background-color:#1e293b; border:1px solid #334155;">
+        <div class="flex items-center gap-4 p-4">
+          <!-- صورة الجهاز -->
+          <div class="flex items-center justify-center rounded-xl overflow-hidden shrink-0"
+               style="width:90px; height:90px; background-color:#0f172a;">
+            <img src="g202.jpg" alt="G202 Gate Controller"
+                 style="width:90px; height:90px; object-fit:contain;"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <!-- بديل إذا لم تُوجد الصورة -->
+            <div style="display:none; width:90px; height:90px; align-items:center; justify-content:center; flex-direction:column; gap:4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" style="color:#334155;" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor"/>
+                <path d="M6 7V5a2 2 0 012-2h8a2 2 0 012 2v2"/>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                <path d="M18 7v10" stroke="currentColor" stroke-width="1"/>
+              </svg>
+              <span class="text-xs font-bold" style="color:#475569;">G202</span>
+            </div>
+          </div>
+          <!-- معلومات الجهاز -->
+          <div class="flex-1">
+            <p class="text-sm font-bold text-white mb-0.5">Gate Controller G202</p>
+            <p class="text-xs mb-2" style="color:#64748b;">وحدة تحكم GSM للبوابات الذكية</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style="background-color:rgba(59,130,246,0.15); color:#60a5fa;">GSM 2G</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style="background-color:rgba(34,197,94,0.15); color:#4ade80;">DC 9-36V</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style="background-color:rgba(168,85,247,0.15); color:#c084fc;">Relay</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- عنوان القسم -->
       <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#64748b;">
@@ -318,8 +388,20 @@
           <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
             رقم هاتف المستخدم
           </label>
-          <input type="tel" id="addUserPhone" placeholder="مثال: 0501234567"
+          <input type="tel" id="addUserPhone" placeholder="مثال: 0096890660001"
                  inputmode="tel" autocomplete="tel" />
+          <!-- ملاحظة رقم الدولة -->
+          <div class="flex items-start gap-1.5 mt-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mt-0.5 shrink-0" style="color:#f59e0b;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            <p class="text-xs leading-relaxed" style="color:#f59e0b;">
+              يجب كتابة رقم فتح الخط للدولة كما في المثال الموضح
+              <span class="font-mono font-bold"> (0096890660001)</span>
+            </p>
+          </div>
         </div>
 
         <!-- حقل رقم التسلسل -->
@@ -426,6 +508,88 @@
         </div>
       </div>
 
+      <!-- بطاقة تغيير كلمة المرور -->
+      <div class="rounded-2xl p-5 mb-4" style="background-color:#1e293b;">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg"
+               style="background-color:rgba(245,158,11,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#f59e0b;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-white">تغيير كلمة المرور</h3>
+        </div>
+
+        <!-- حقل كلمة المرور الحالية -->
+        <div class="mb-3">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            كلمة المرور الحالية
+          </label>
+          <input type="password" id="pwdOld" placeholder="مثال: 1234"
+                 inputmode="numeric" maxlength="4" />
+        </div>
+
+        <!-- حقل كلمة المرور الجديدة -->
+        <div class="mb-3">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            كلمة المرور الجديدة (4 أرقام)
+          </label>
+          <input type="password" id="pwdNew" placeholder="مثال: 9066"
+                 inputmode="numeric" maxlength="4" />
+        </div>
+
+        <!-- تأكيد كلمة المرور الجديدة -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            تأكيد كلمة المرور الجديدة
+          </label>
+          <input type="password" id="pwdConfirm" placeholder="أعد كتابة الرقم الجديد"
+                 inputmode="numeric" maxlength="4" />
+        </div>
+
+        <!-- زر إرسال كود التغيير -->
+        <button onclick="changePassword()"
+                class="action-btn w-full py-2.5 rounded-xl font-semibold text-sm mb-4"
+                style="background-color:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3);">
+          إرسال كود تغيير كلمة المرور
+        </button>
+
+        <!-- صيغة الكود ومعلومات -->
+        <div class="rounded-xl p-3" style="background-color:#0f172a;">
+          <p class="text-xs font-bold mb-2" style="color:#94a3b8;">صيغة الكود المُرسَل:</p>
+          <code class="text-xs font-mono block mb-3 px-2 py-1.5 rounded-lg"
+                style="background-color:#1e293b; color:#fbbf24; word-break:break-all;">
+            كلمة_المرور_القديمة#PWDكلمة_الجديدة#PWDكلمة_الجديدة#
+          </code>
+          <p class="text-xs font-bold mb-1" style="color:#94a3b8;">مثال:</p>
+          <code class="text-xs font-mono block mb-3 px-2 py-1.5 rounded-lg"
+                style="background-color:#1e293b; color:#4ade80;">
+            1234#PWD9066#PWD9066#
+          </code>
+          <!-- تنبيهات مهمة -->
+          <div class="space-y-1.5 mt-2">
+            <div class="flex items-start gap-1.5">
+              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">1.</span>
+              <p class="text-xs" style="color:#64748b;">اكتب الحروف بالإنجليزية الكبيرة: <span class="font-mono font-bold" style="color:#fbbf24;">PWD</span></p>
+            </div>
+            <div class="flex items-start gap-1.5">
+              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">2.</span>
+              <p class="text-xs" style="color:#64748b;">لا تضع أي مسافات بين الأرقام والرموز</p>
+            </div>
+            <div class="flex items-start gap-1.5">
+              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">3.</span>
+              <p class="text-xs" style="color:#64748b;">كلمة المرور الجديدة يجب أن تكون <span class="font-bold" style="color:#f1f5f9;">4 أرقام فقط</span></p>
+            </div>
+            <div class="flex items-start gap-1.5">
+              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">4.</span>
+              <p class="text-xs" style="color:#64748b;">انتظر رد الجهاز لتأكيد نجاح التغيير</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- معلومات الجهاز -->
       <div class="rounded-2xl p-4" style="background-color:#1e293b; border:1px solid #334155;">
         <p class="text-xs font-bold mb-2" style="color:#94a3b8;">معلومات الجهاز المحفوظة</p>
@@ -437,6 +601,100 @@
         <div class="flex justify-between items-center py-2">
           <span class="text-xs" style="color:#64748b;">كلمة المرور</span>
           <span class="text-xs font-mono font-medium" id="infoPass" style="color:#f1f5f9;">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== بطاقة بيانات الشركة ===== -->
+    <div class="rounded-2xl p-5 mt-5" style="background-color:#1e293b; border:1px solid #334155;">
+      <!-- شعار RADMA كبير -->
+      <div class="flex flex-col items-center mb-4">
+        <svg width="52" height="64" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg" class="mb-2">
+          <defs>
+            <linearGradient id="shieldGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ef4444"/>
+              <stop offset="100%" stop-color="#991b1b"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 2 L74 14 L74 52 Q74 78 40 94 Q6 78 6 52 L6 14 Z" fill="url(#shieldGrad2)"/>
+          <path d="M12 24 Q6 50 13 74 Q20 56 26 40 Q19 32 12 24Z" fill="#2563eb"/>
+          <text x="32" y="66" font-family="Arial Black,Arial" font-size="40" font-weight="900" fill="white">R</text>
+          <path d="M40 4 L68 15 L68 22 L40 11 L12 22 L12 15 Z" fill="rgba(255,255,255,0.12)"/>
+        </svg>
+        <p class="text-lg font-black tracking-widest" style="color:#e2e8f0; letter-spacing:0.2em;">RADMA</p>
+        <p class="text-xs mt-0.5" style="color:#64748b;">التقنية الذكية للحلول الأمنية</p>
+      </div>
+
+      <div class="space-y-3">
+        <!-- الموقع الرسمي -->
+        <a href="https://radma.co" target="_blank"
+           class="flex items-center gap-3 rounded-xl p-3"
+           style="background-color:#0f172a;">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+               style="background-color:rgba(59,130,246,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#3b82f6;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs" style="color:#64748b;">الموقع الرسمي</p>
+            <p class="text-sm font-semibold" style="color:#60a5fa;">radma.co</p>
+          </div>
+        </a>
+
+        <!-- انستجرام -->
+        <a href="https://www.instagram.com/radma_om" target="_blank"
+           class="flex items-center gap-3 rounded-xl p-3"
+           style="background-color:#0f172a;">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+               style="background-color:rgba(236,72,153,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#ec4899;"
+                 viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs" style="color:#64748b;">انستجرام</p>
+            <p class="text-sm font-semibold" style="color:#f472b6;">@radma_om</p>
+          </div>
+        </a>
+
+        <!-- أرقام التواصل -->
+        <div class="flex gap-2">
+          <a href="tel:90660001"
+             class="flex-1 flex items-center gap-2 rounded-xl p-3"
+             style="background-color:#0f172a;">
+            <div class="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+                 style="background-color:rgba(34,197,94,0.15);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#22c55e;"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs" style="color:#64748b;">للتواصل</p>
+              <p class="text-sm font-mono font-bold" style="color:#4ade80;">90660001</p>
+            </div>
+          </a>
+          <a href="tel:90660002"
+             class="flex-1 flex items-center gap-2 rounded-xl p-3"
+             style="background-color:#0f172a;">
+            <div class="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+                 style="background-color:rgba(34,197,94,0.15);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#22c55e;"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs" style="color:#64748b;">للتواصل</p>
+              <p class="text-sm font-mono font-bold" style="color:#4ade80;">90660002</p>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -672,6 +930,24 @@
       // بناء كود الحذف (بدون رقم هاتف)
       const code = `${pass}#TEL#${seqFormatted}#`;
 
+      sendSMS(code);
+    }
+
+    // ============================================================
+    // دالة تغيير كلمة المرور
+    // الصيغة: [oldPass]#PWD[newPass]#PWD[newPass]#
+    // ============================================================
+    function changePassword() {
+      const oldPass  = document.getElementById('pwdOld').value.trim();
+      const newPass  = document.getElementById('pwdNew').value.trim();
+      const confPass = document.getElementById('pwdConfirm').value.trim();
+
+      if (!oldPass) { showToast('يرجى إدخال كلمة المرور الحالية', 'error'); return; }
+      if (!newPass)  { showToast('يرجى إدخال كلمة المرور الجديدة', 'error'); return; }
+      if (!/^\d{4}$/.test(newPass)) { showToast('كلمة المرور الجديدة يجب أن تكون 4 أرقام فقط', 'error'); return; }
+      if (newPass !== confPass) { showToast('كلمة المرور الجديدة وتأكيدها غير متطابقين', 'error'); return; }
+
+      const code = `${oldPass}#PWD${newPass}#PWD${newPass}#`;
       sendSMS(code);
     }
 
