@@ -13,6 +13,7 @@
 
   <!-- ربط ملف manifest لدعم PWA -->
   <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="Image/icon-192.png" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -153,22 +154,11 @@
     <!-- شريط الشركة العلوي -->
     <div class="flex items-center justify-between px-4 py-2" style="border-bottom:1px solid #1e3a5f; background-color:#0f172a;">
       <div class="flex items-center gap-2">
-        <!-- شعار RADMA SVG -->
-        <svg width="28" height="34" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ef4444"/>
-              <stop offset="100%" stop-color="#991b1b"/>
-            </linearGradient>
-          </defs>
-          <path d="M40 2 L74 14 L74 52 Q74 78 40 94 Q6 78 6 52 L6 14 Z" fill="url(#shieldGrad)"/>
-          <path d="M12 24 Q6 50 13 74 Q20 56 26 40 Q19 32 12 24Z" fill="#2563eb"/>
-          <text x="32" y="66" font-family="Arial Black,Arial" font-size="40" font-weight="900" fill="white">R</text>
-          <path d="M40 4 L68 15 L68 22 L40 11 L12 22 L12 15 Z" fill="rgba(255,255,255,0.12)"/>
-        </svg>
+        <!-- شعار RADMA -->
+        <img src="Image/radma_logo.png" alt="RADMA Logo" style="width:34px; height:34px; object-fit:contain;" />
         <div>
           <p class="text-sm font-black tracking-widest" style="color:#e2e8f0; letter-spacing:0.15em;">RADMA</p>
-          <p class="text-xs" style="color:#3b82f6;">التقنية الذكية</p>
+          <p class="text-xs" style="color:#3b82f6;">البوابات الإلكترونية</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -245,7 +235,7 @@
           <!-- صورة الجهاز -->
           <div class="flex items-center justify-center rounded-xl overflow-hidden shrink-0"
                style="width:90px; height:90px; background-color:#0f172a;">
-            <img src="g202.jpg" alt="G202 Gate Controller"
+            <img src="Image/G202.jpg" alt="G202 Gate Controller"
                  style="width:90px; height:90px; object-fit:contain;"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
             <!-- بديل إذا لم تُوجد الصورة -->
@@ -353,6 +343,25 @@
         </svg>
       </button>
 
+      <!-- ضبط مدة فتح الباب -->
+      <div class="rounded-2xl p-4 mb-3" style="background-color:#1e293b; border:1px solid #334155;">
+        <p class="text-xs font-semibold mb-3" style="color:#94a3b8;">ضبط مدة فتح الباب</p>
+        <div class="flex gap-2 items-end">
+          <div class="flex-1">
+            <label class="block text-xs mb-1.5" style="color:#64748b;">
+              القيمة (تُقسم ÷2 = الثواني الفعلية)
+            </label>
+            <input type="number" id="gotTimer" placeholder="مثال: 10 = 5 ثوانٍ"
+                   min="1" max="99" inputmode="numeric" />
+          </div>
+          <button onclick="setGateTimer()"
+                  class="action-btn py-2.5 px-4 rounded-xl font-bold text-sm shrink-0"
+                  style="background-color:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3);">
+            ضبط
+          </button>
+        </div>
+      </div>
+
       <!-- ملاحظة إرشادية -->
       <div class="flex items-start gap-2 rounded-xl p-3 mt-4" style="background-color:#1e293b;">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mt-0.5 shrink-0" style="color:#3b82f6;"
@@ -451,6 +460,65 @@
           حذف المستخدم عبر SMS
         </button>
       </div>
+      <!-- استعلام عن رقم -->
+      <div class="rounded-2xl p-5 mt-4" style="background-color:#1e293b;">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg"
+               style="background-color:rgba(168,85,247,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#a855f7;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h2 class="text-base font-bold text-white">استعلام عن رقم محفوظ</h2>
+        </div>
+        <div class="mb-4">
+          <label class="block text-xs font-medium mb-1.5" style="color:#94a3b8;">
+            رقم التسلسل للاستعلام
+          </label>
+          <input type="number" id="queryUserSeq" placeholder="مثال: 001"
+                 min="1" max="200" inputmode="numeric" />
+          <p class="text-xs mt-1.5" style="color:#64748b;">
+            سيرد الجهاز برسالة تحتوي على الرقم المحفوظ في هذا التسلسل
+          </p>
+        </div>
+        <button onclick="queryUser()"
+                class="action-btn w-full py-3 rounded-xl font-bold text-sm"
+                style="background-color:rgba(168,85,247,0.15); color:#a855f7; border:1px solid rgba(168,85,247,0.3);">
+          استعلام عبر SMS
+        </button>
+      </div>
+
+      <!-- وضع السماح -->
+      <div class="rounded-2xl p-5 mt-4" style="background-color:#1e293b;">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg"
+               style="background-color:rgba(245,158,11,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color:#f59e0b;"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <h2 class="text-base font-bold text-white">وضع السماح بالفتح</h2>
+        </div>
+        <p class="text-xs mb-4 leading-relaxed" style="color:#64748b;">
+          تحديد من يُسمح له بفتح الباب عبر الاتصال بالجهاز
+        </p>
+        <div class="flex gap-2">
+          <button onclick="sendSMS(buildCode('AU#'))"
+                  class="action-btn flex-1 py-3 rounded-xl font-bold text-sm"
+                  style="background-color:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3);">
+            المسجلون فقط
+          </button>
+          <button onclick="confirmAllowAll()"
+                  class="action-btn flex-1 py-3 rounded-xl font-bold text-sm"
+                  style="background-color:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3);">
+            الجميع (غير آمن)
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ===== التبويب الثالث: صيانة ===== -->
@@ -484,27 +552,30 @@
         </div>
       </div>
 
-      <!-- بطاقة تفعيل رسائل التأكيد -->
+      <!-- بطاقة رسائل التأكيد -->
       <div class="rounded-2xl p-5 mb-4" style="background-color:#1e293b;">
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:#22c55e;"
-                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <h3 class="text-sm font-bold text-white">تفعيل رسائل التأكيد</h3>
-            </div>
-            <p class="text-xs leading-relaxed mb-4" style="color:#64748b;">
-              يُفعّل إرسال رسالة تأكيد من الجهاز بعد تنفيذ كل أمر.
-            </p>
-            <button onclick="sendSMS(buildCode('R#', false))"
-                    class="action-btn w-full py-2.5 rounded-xl font-semibold text-sm"
-                    style="background-color:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3);">
-              تفعيل رسائل التأكيد
-            </button>
-          </div>
+        <div class="flex items-center gap-2 mb-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:#22c55e;"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="text-sm font-bold text-white">رسائل التأكيد</h3>
+        </div>
+        <p class="text-xs leading-relaxed mb-4" style="color:#64748b;">
+          تفعيل أو إيقاف رسالة التأكيد التي يُرسلها الجهاز بعد كل أمر.
+        </p>
+        <div class="flex gap-2">
+          <button onclick="sendSMS(buildCode('R#', false))"
+                  class="action-btn flex-1 py-2.5 rounded-xl font-semibold text-sm"
+                  style="background-color:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3);">
+            تفعيل
+          </button>
+          <button onclick="sendSMS(buildCode('N#', false))"
+                  class="action-btn flex-1 py-2.5 rounded-xl font-semibold text-sm"
+                  style="background-color:rgba(100,116,139,0.15); color:#94a3b8; border:1px solid rgba(100,116,139,0.3);">
+            إيقاف
+          </button>
         </div>
       </div>
 
@@ -556,38 +627,26 @@
           إرسال كود تغيير كلمة المرور
         </button>
 
-        <!-- صيغة الكود ومعلومات -->
-        <div class="rounded-xl p-3" style="background-color:#0f172a;">
-          <p class="text-xs font-bold mb-2" style="color:#94a3b8;">صيغة الكود المُرسَل:</p>
-          <code class="text-xs font-mono block mb-3 px-2 py-1.5 rounded-lg"
-                style="background-color:#1e293b; color:#fbbf24; word-break:break-all;">
-            كلمة_المرور_القديمة#PWDكلمة_الجديدة#PWDكلمة_الجديدة#
-          </code>
-          <p class="text-xs font-bold mb-1" style="color:#94a3b8;">مثال:</p>
-          <code class="text-xs font-mono block mb-3 px-2 py-1.5 rounded-lg"
-                style="background-color:#1e293b; color:#4ade80;">
-            1234#PWD9066#PWD9066#
-          </code>
-          <!-- تنبيهات مهمة -->
-          <div class="space-y-1.5 mt-2">
-            <div class="flex items-start gap-1.5">
-              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">1.</span>
-              <p class="text-xs" style="color:#64748b;">اكتب الحروف بالإنجليزية الكبيرة: <span class="font-mono font-bold" style="color:#fbbf24;">PWD</span></p>
-            </div>
-            <div class="flex items-start gap-1.5">
-              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">2.</span>
-              <p class="text-xs" style="color:#64748b;">لا تضع أي مسافات بين الأرقام والرموز</p>
-            </div>
-            <div class="flex items-start gap-1.5">
-              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">3.</span>
-              <p class="text-xs" style="color:#64748b;">كلمة المرور الجديدة يجب أن تكون <span class="font-bold" style="color:#f1f5f9;">4 أرقام فقط</span></p>
-            </div>
-            <div class="flex items-start gap-1.5">
-              <span class="text-xs font-bold shrink-0" style="color:#f59e0b;">4.</span>
-              <p class="text-xs" style="color:#64748b;">انتظر رد الجهاز لتأكيد نجاح التغيير</p>
-            </div>
-          </div>
+      </div>
+
+      <!-- بطاقة إعادة ضبط المصنع -->
+      <div class="rounded-2xl p-5 mb-4" style="background-color:#1e293b; border:1px solid rgba(239,68,68,0.3);">
+        <div class="flex items-center gap-2 mb-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" style="color:#ef4444;"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+          <h3 class="text-sm font-bold" style="color:#ef4444;">إعادة ضبط المصنع</h3>
         </div>
+        <p class="text-xs leading-relaxed mb-4" style="color:#64748b;">
+          تحذير: سيُحذف جميع الأرقام المحفوظة وتُعاد الإعدادات إلى الافتراضية.
+        </p>
+        <button onclick="confirmFactoryReset()"
+                class="action-btn w-full py-2.5 rounded-xl font-semibold text-sm"
+                style="background-color:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.4);">
+          إعادة ضبط المصنع
+        </button>
       </div>
 
       <!-- معلومات الجهاز -->
@@ -609,20 +668,9 @@
     <div class="rounded-2xl p-5 mt-5" style="background-color:#1e293b; border:1px solid #334155;">
       <!-- شعار RADMA كبير -->
       <div class="flex flex-col items-center mb-4">
-        <svg width="52" height="64" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg" class="mb-2">
-          <defs>
-            <linearGradient id="shieldGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ef4444"/>
-              <stop offset="100%" stop-color="#991b1b"/>
-            </linearGradient>
-          </defs>
-          <path d="M40 2 L74 14 L74 52 Q74 78 40 94 Q6 78 6 52 L6 14 Z" fill="url(#shieldGrad2)"/>
-          <path d="M12 24 Q6 50 13 74 Q20 56 26 40 Q19 32 12 24Z" fill="#2563eb"/>
-          <text x="32" y="66" font-family="Arial Black,Arial" font-size="40" font-weight="900" fill="white">R</text>
-          <path d="M40 4 L68 15 L68 22 L40 11 L12 22 L12 15 Z" fill="rgba(255,255,255,0.12)"/>
-        </svg>
+        <img src="Image/radma_logo.png" alt="RADMA Logo" class="mb-2" style="width:64px; height:64px; object-fit:contain;" />
         <p class="text-lg font-black tracking-widest" style="color:#e2e8f0; letter-spacing:0.2em;">RADMA</p>
-        <p class="text-xs mt-0.5" style="color:#64748b;">التقنية الذكية للحلول الأمنية</p>
+        <p class="text-xs mt-0.5" style="color:#64748b;">البوابات الإلكترونية</p>
       </div>
 
       <div class="space-y-3">
@@ -779,7 +827,7 @@
           رقم هاتف جهاز G202
         </label>
         <input type="tel" id="settingsPhone"
-               placeholder="مثال: +966501234567"
+               placeholder="90660002"
                inputmode="tel" autocomplete="tel" />
         <p class="text-xs mt-1.5" style="color:#64748b;">
           رقم الـ SIM المُركَّب في وحدة التحكم
@@ -949,6 +997,52 @@
 
       const code = `${oldPass}#PWD${newPass}#PWD${newPass}#`;
       sendSMS(code);
+    }
+
+    // ============================================================
+    // دالة الاستعلام عن رقم محفوظ في تسلسل معين
+    // الصيغة: [password]#TEL[seq]?
+    // ============================================================
+    function queryUser() {
+      const seqRaw = document.getElementById('queryUserSeq').value.trim();
+      if (!seqRaw) { showToast('يرجى إدخال رقم التسلسل للاستعلام', 'error'); return; }
+      const seq = parseInt(seqRaw, 10);
+      if (seq < 1 || seq > 200) { showToast('رقم التسلسل يجب أن يكون بين 1 و200', 'error'); return; }
+      const seqFormatted = String(seq).padStart(3, '0');
+      const pass = localStorage.getItem(PASS_KEY) || '1234';
+      sendSMS(`${pass}#TEL${seqFormatted}?`);
+    }
+
+    // ============================================================
+    // دالة ضبط مدة فتح الباب
+    // الصيغة: [password]#GOT[value]#
+    // ============================================================
+    function setGateTimer() {
+      const val = document.getElementById('gotTimer').value.trim();
+      if (!val) { showToast('يرجى إدخال قيمة المؤقت', 'error'); return; }
+      const num = parseInt(val, 10);
+      if (isNaN(num) || num < 1 || num > 99) { showToast('القيمة يجب أن تكون بين 1 و99', 'error'); return; }
+      sendSMS(buildCode(`GOT${String(num).padStart(2,'0')}#`));
+    }
+
+    // ============================================================
+    // تأكيد السماح لجميع الأرقام (وضع غير آمن)
+    // الصيغة: [password]#AA#
+    // ============================================================
+    function confirmAllowAll() {
+      if (confirm('تحذير: ستسمح لأي رقم بفتح الباب. هل أنت متأكد؟')) {
+        sendSMS(buildCode('AA#'));
+      }
+    }
+
+    // ============================================================
+    // تأكيد إعادة ضبط المصنع
+    // الصيغة: [password]#RESET#
+    // ============================================================
+    function confirmFactoryReset() {
+      if (confirm('تحذير: سيُحذف جميع الأرقام والإعدادات نهائياً. هل أنت متأكد؟')) {
+        sendSMS(buildCode('RESET#'));
+      }
     }
 
     // ============================================================
